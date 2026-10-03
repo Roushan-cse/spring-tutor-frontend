@@ -114,126 +114,152 @@ function App() {
     setLoading(false);
   }
 };
+return (
+  <div className="h-[100dvh] flex bg-black text-white overflow-hidden">
+    
+    {/* Sidebar Desktop */}
+    <div className="hidden md:flex w-72 border-r border-zinc-800 p-5 flex-col shrink-0">
+      <h1 className="text-2xl font-bold">
+        SpringBoot Tutor
+      </h1>
 
-  return (
-    <div className="h-screen flex bg-black text-white">
-      {/* Sidebar */}
-      <div className="w-72 border-r border-zinc-800 p-5 flex flex-col">
-        <h1 className="text-2xl font-bold">
+      <p className="mt-2 text-zinc-400">
+        Learn Spring Boot with AI
+      </p>
+
+      <button
+        className="mt-6 bg-zinc-900 border border-zinc-700 rounded-xl p-3 hover:bg-zinc-800"
+        onClick={() =>
+          setMessages([
+            {
+              role: "assistant",
+              content:
+                "Hello! I am SpringBoot Tutor. Ask me anything about Spring Boot.",
+            },
+          ])
+        }
+      >
+        + New Chat
+      </button>
+
+      <div className="mt-auto text-zinc-500">
+        Roushan
+      </div>
+    </div>
+
+    {/* Main Area */}
+    <div className="flex flex-1 flex-col min-h-0">
+
+      {/* Mobile Header */}
+      <div className="md:hidden border-b border-zinc-800 p-4">
+        <h1 className="font-bold text-lg">
           SpringBoot Tutor
         </h1>
+      </div>
 
-        <p className="mt-2 text-zinc-400">
-          Learn Spring Boot with AI
-        </p>
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-3 md:p-6 min-h-0">
+        <div className="max-w-4xl w-full mx-auto space-y-6">
 
-        <button
-          className="mt-6 bg-zinc-900 border border-zinc-700 rounded-xl p-3 hover:bg-zinc-800"
-          onClick={() =>
-            setMessages([
-              {
-                role: "assistant",
-                content:
-                  "Hello! I am SpringBoot Tutor. Ask me anything about Spring Boot.",
-              },
-            ])
-          }
-        >
-          + New Chat
-        </button>
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`flex ${
+                message.role === "user"
+                  ? "justify-end"
+                  : "justify-start"
+              }`}
+            >
+              <div
+                className={`max-w-[90%] md:max-w-[75%] px-5 py-3 rounded-2xl whitespace-pre-wrap break-words ${
+                  message.role === "user"
+                    ? "bg-blue-600 text-white"
+                    : "bg-zinc-900 border border-zinc-700 text-white"
+                }`}
+              >
+                {message.content}
+              </div>
+            </div>
+          ))}
 
-        <div className="mt-auto text-zinc-500">
-          Roushan
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-zinc-900 border border-zinc-700 px-5 py-3 rounded-2xl">
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-white rounded-full animate-bounce"></span>
+
+                  <span
+                    className="w-2 h-2 bg-white rounded-full animate-bounce"
+                    style={{ animationDelay: "0.15s" }}
+                  ></span>
+
+                  <span
+                    className="w-2 h-2 bg-white rounded-full animate-bounce"
+                    style={{ animationDelay: "0.3s" }}
+                  ></span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div ref={chatEndRef}></div>
         </div>
       </div>
 
-      {/* Main Area */}
-      <div className="flex flex-1 flex-col min-h-0">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 min-h-0">
-          <div className="max-w-4xl mx-auto space-y-6">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex ${
-                  message.role === "user"
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[70%] px-5 py-3 rounded-2xl whitespace-pre-wrap ${
-                    message.role === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-zinc-900 border border-zinc-700 text-white"
-                  }`}
-                >
-                  {message.content}
-                </div>
-              </div>
-            ))}
+      {/* Input */}
+      <div className="border-t border-zinc-800 p-4">
+        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-3 w-full">
 
-            {loading && (
-              <div className="flex justify-start">
-                <div className="bg-zinc-900 border border-zinc-700 px-5 py-3 rounded-2xl">
-                  Thinking...
-                </div>
-              </div>
-            )}
-
-            <div ref={chatEndRef}></div>
-          </div>
-        </div>
-
-        {/* Input */}
-        <div className="border-t border-zinc-800 p-4">
-          <div className="max-w-4xl mx-auto flex gap-3">
-            <input
-              value={question}
-              disabled={loading}
-              onChange={(e) =>
-                setQuestion(e.target.value)
+          <input
+            value={question}
+            disabled={loading}
+            onChange={(e) =>
+              setQuestion(e.target.value)
+            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSend();
               }
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSend();
-                }
-              }}
-              placeholder="Ask anything about Spring Boot..."
-              className="
-                flex-1
-                bg-zinc-900
-                border
-                border-zinc-700
-                rounded-xl
-                px-4
-                py-3
-                text-white
-                outline-none
-                disabled:opacity-50
-              "
-            />
+            }}
+            placeholder="Ask anything about Spring Boot..."
+            className="
+              flex-1
+              w-full
+              bg-zinc-900
+              border
+              border-zinc-700
+              rounded-xl
+              px-4
+              py-3
+              text-white
+              outline-none
+              disabled:opacity-50
+            "
+          />
 
-            <button
-              onClick={handleSend}
-              disabled={loading}
-              className="
-                bg-blue-600
-                hover:bg-blue-700
-                px-6
-                py-3
-                rounded-xl
-                text-white
-                disabled:opacity-50
-              "
-            >
-              {loading ? "Thinking..." : "Send"}
-            </button>
-          </div>
+          <button
+            onClick={handleSend}
+            disabled={loading}
+            className="
+              bg-blue-600
+              hover:bg-blue-700
+              px-6
+              py-3
+              rounded-xl
+              text-white
+              disabled:opacity-50
+              w-full
+              sm:w-auto
+            "
+          >
+            {loading ? "Thinking..." : "Send"}
+          </button>
+
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default App;
